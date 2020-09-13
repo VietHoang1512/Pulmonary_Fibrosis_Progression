@@ -19,14 +19,13 @@ from datasets import OSIC_Dataset
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--model_name", type=str, default="b1")
-parser.add_argument("--num_folds", type=int, default=2)
-parser.add_argument("--num_epochs", type=int, default=2)
-parser.add_argument("--batch_size", type=int, default=1)
+parser.add_argument("--num_folds", type=int, default=5)
+parser.add_argument("--num_epochs", type=int, default=3)
+parser.add_argument("--batch_size", type=int, default=8)
 parser.add_argument("--lr", type=float, default=1e-3)
 
 parser.add_argument("--meta_train", type=str,
-                    default="../data/small_train.csv")
-parser.add_argument("--meta_test", type=str, default="../data/small_test.csv")
+                    default="../data/train.csv")
 parser.add_argument("--data", type=str, default="../data/train")
 parser.add_argument("--external_data", type=str, default="../data/img/")
 
@@ -93,10 +92,8 @@ subs = []
 
 folds_history = []
 for fold, (tr_idx, val_idx) in enumerate(kf.split(P)):
-    print('#####################')
-    print('####### Fold %i ######' % fold)
-    print('#####################')
-    print('Training...')
+    print('_'*80)
+    print(f'Training on fold {fold}/{args.num_folds}')
 
     er = tf.keras.callbacks.EarlyStopping(
         monitor="val_loss",
@@ -107,9 +104,9 @@ for fold, (tr_idx, val_idx) in enumerate(kf.split(P)):
         baseline=None,
         restore_best_weights=True,
     )
-
+    os.makedirs(f"../outputs/{arg.model_name}", exist_ok=True)
     cpt = tf.keras.callbacks.ModelCheckpoint(
-        filepath='fold-%i.h5' % fold,
+        filepath=f'../outputs/{arg.model_name}/fold_{fold}.h5',
         monitor='val_loss',
         verbose=1,
         save_best_only=True,
@@ -132,11 +129,10 @@ for fold, (tr_idx, val_idx) in enumerate(kf.split(P)):
                                                features=features),
                                   steps_per_epoch=32,
                                   validation_data=OSIC_Dataset(root=args.data,
-                                                             keys=P[val_idx],
-                                                             a=A,
-                                                             features=features),
+                                                               keys=P[val_idx],
+                                                               a=A,
+                                                               features=features),
                                   validation_steps=16,
                                   callbacks=[cpt, rlp],
                                   epochs=args.num_epochs)
     folds_history.append(history.history)
-    print('Training done!')

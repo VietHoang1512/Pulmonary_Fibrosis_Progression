@@ -5,9 +5,10 @@ pip install -r requirements.txt
 cd ..
 mkdir logs
 mkdir data
+mkdir outputs
 cd data
 
-kaggle competitions download -c osic-pulmonary-fibrosis-progression
-kaggle datasets download miklgr500/osic-pulmonary-fibrosis-progression-lungs-mask
+# kaggle competitions download -c osic-pulmonary-fibrosis-progression
+# kaggle datasets download miklgr500/osic-pulmonary-fibrosis-progression-lungs-mask
 # unzip osic-pulmonary-fibrosis-progression.zip
 # unzip osic-pulmonary-fibrosis-progression-lungs-mask.zip
