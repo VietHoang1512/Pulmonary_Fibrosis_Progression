@@ -6,6 +6,7 @@ import logging
 import os
 import tensorflow as tf
 from sklearn.model_selection import KFold
+import cv2
 
 from utils import seed_everything, encode_feature
 from models import build_model
@@ -81,7 +82,8 @@ for p in pbar:
             x.append(cv2.imread(args.external_data +
                                 f'mask_noise/mask_noise/{p}/{i}', 0).mean())
             y.append(float(i[:-4]) / max(numb))
-    except:
+    except Exception as e:
+        logging.warning(e)
         logging.warning(f"Cannot find external data for patient {p}")
         pass
 
