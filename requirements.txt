@@ -1,0 +1,9 @@
+tqdm
+pandas
+matplotlib
+seaborn
+opencv-python
+pydicom
+Keras-Applications
+efficientnet==1.1.0
+sklearn
